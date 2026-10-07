@@ -29,3 +29,9 @@ Push this folder to GitHub, then import the repository into Vercel. No environme
 
 ## Important
 This is a case-study prototype with illustrative numbers. It is not financial advice and does not place real orders.
+
+## First-screen thesis
+The prototype is intentionally not another investing dashboard. The opening experience answers:
+**“Why would a 22-year-old open this instead of the normal Groww app?”**
+
+The answer is a guided entry point: start with the person's goal and comfortable monthly amount, then reveal a simple plan and explain the trade-offs before showing products.
