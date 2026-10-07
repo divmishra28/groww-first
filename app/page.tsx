@@ -69,6 +69,7 @@ export default function Home() {
   const [monthly, setMonthly] = useState(3000);
   const [risk, setRisk] = useState<RiskComfort>('Some ups & downs');
   const [question, setQuestion] = useState('Why this plan?');
+  const [hasInvested, setHasInvested] = useState(false);
 
   const plan = goal ? basePlans[goal] : null;
   const split = goal ? adjustedSplit(goal, risk) : [45, 35, 20] as [number, number, number];
@@ -90,7 +91,7 @@ export default function Home() {
     return '10 170, 90 151, 160 163, 230 134, 300 147, 380 107, 455 121, 520 76, 590 89';
   }, [years]);
 
-  const next = () => setStep((s) => Math.min(3, s + 1));
+  const next = () => setStep((s) => Math.min(5, s + 1));
   const back = () => setStep((s) => Math.max(0, s - 1));
 
   return (
@@ -121,8 +122,8 @@ export default function Home() {
             <div className="demo-badge">PROTOTYPE</div>
           </header>
 
-          <div className="progress" aria-label={`Step ${step + 1} of 4`}>
-            {[0, 1, 2, 3].map((i) => <div key={i} className={i <= step ? 'progress-line active' : 'progress-line'} />)}
+          <div className="progress" aria-label={`Step ${step + 1} of 6`}>
+            {[0, 1, 2, 3, 4, 5].map((i) => <div key={i} className={i <= step ? 'progress-line active' : 'progress-line'} />)}
           </div>
 
           <div key={step} className="step-transition">
@@ -279,8 +280,96 @@ export default function Home() {
                   <div><span className="check">✓</span>Understand the downside</div>
                   <div><span className="check">✓</span>Know why the mix exists</div>
                 </div>
-                <button className="primary" onClick={() => setStep(0)}>Restart the demo</button>
+                <button className="primary" onClick={next}>Continue to my first investment <span>→</span></button>
                 <p className="disclaimer">Groww First is a case-study prototype. It does not place real orders or provide financial advice.</p>
+              </section>
+            )}
+
+            {step === 4 && (
+              <section className="screen">
+                <div className="eyebrow">YOUR STARTING POINT</div>
+                <div className="title-row"><div><h1>Here's what <span className="green-text">makes sense.</span></h1><p className="sub compact">One simple starting point, based on what you told us — before you see a wall of products.</p></div><div className="spark">✦</div></div>
+
+                <div className="starting-point-grid">
+                  <div className="starting-point-main">
+                    <div className="summary-hero card">
+                      <div className="summary-top"><span className="mini-title">YOUR INPUTS</span><span className="summary-pill">Personalised demo</span></div>
+                      <div className="summary-chips">
+                        <span><b>Goal</b>{goal}</span>
+                        <span><b>Monthly</b>{formatINR(monthly)}</span>
+                        <span><b>Comfort</b>{risk}</span>
+                        <span><b>Horizon</b>{plan?.horizon ?? '5+ years'}</span>
+                      </div>
+                    </div>
+
+                    <div className="starting-point-card card">
+                      <div className="starting-point-head"><div><div className="mini-title">YOUR SIMPLE START</div><h2>{plan?.title ?? 'Build long-term wealth'}</h2></div><div className="starting-amount">{formatINR(monthly)}<small>/ month</small></div></div>
+                      <div className="simple-start-copy">{plan?.oneLiner ?? 'Give compounding more room to work.'}</div>
+                      <div className="mini-allocation">{allocationLabels.map((label, i) => <div key={label} className="mini-allocation-row"><span><i style={{ background: allocationColors[i] }} />{label}</span><strong>{split[i]}%</strong></div>)}</div>
+                      <div className="prototype-note">This is an educational starting mix, not a product recommendation. In the real Groww flow, this is the point where the user could explore suitable products.</div>
+                    </div>
+                  </div>
+
+                  <aside className="starting-point-side">
+                    <div className="guardrail-card card">
+                      <div className="mini-title">BEFORE YOU INVEST</div>
+                      <div className="guardrail-line"><span className="check">✓</span><div><b>You don't need to get it perfect.</b><small>You need a plan you understand and can stick with.</small></div></div>
+                      <div className="guardrail-line"><span className="check">✓</span><div><b>Short-term drops can happen.</b><small>A lower portfolio value doesn't automatically mean the plan is broken.</small></div></div>
+                      <div className="guardrail-line"><span className="check">✓</span><div><b>Your amount should feel sustainable.</b><small>Consistency matters more than stretching your budget.</small></div></div>
+                    </div>
+                  </aside>
+                </div>
+
+                <div className="sticky-cta"><button className="primary" onClick={next}>See my first investment <span>→</span></button></div>
+              </section>
+            )}
+
+            {step === 5 && (
+              <section className="screen first-investment-screen">
+                {!hasInvested ? (
+                  <>
+                    <div className="eyebrow">YOUR FIRST INVESTMENT</div>
+                    <div className="investment-hero">
+                      <div><h1>Ready for your <span className="green-text">first ₹500?</span></h1><p className="sub">You've made the hard part simpler: you know what you're investing for, how much you can sustain and what the downside looks like.</p></div>
+                      <div className="first-investment-badge">01<br /><small>FIRST INVESTMENT</small></div>
+                    </div>
+
+                    <div className="first-investment-grid">
+                      <div className="investment-card card">
+                        <div className="investment-card-top"><span>START WITH</span><strong>₹500</strong></div>
+                        <div className="investment-progress"><span style={{ width: '50%' }} /></div>
+                        <div className="investment-progress-labels"><span>₹500 invested</span><b>₹1,000 milestone</b></div>
+                        <div className="investment-reasons">
+                          <div><span className="check">✓</span><div><b>Goal is clear</b><small>{goal ?? 'Long-term wealth'}</small></div></div>
+                          <div><span className="check">✓</span><div><b>Amount is sustainable</b><small>{formatINR(monthly)} planned each month</small></div></div>
+                          <div><span className="check">✓</span><div><b>Downside is visible</b><small>You know this value can move up and down</small></div></div>
+                        </div>
+                      </div>
+
+                      <aside className="first-investment-side">
+                        <div className="why-invest-card card">
+                          <div className="mini-title">WHY START SMALL?</div>
+                          <p>Because your first job is not to maximise returns. It's to become comfortable being an investor.</p>
+                          <div className="small-callout">A ₹500 first step is easier to understand, review and repeat.</div>
+                        </div>
+                      </aside>
+                    </div>
+
+                    <div className="sticky-cta"><button className="primary" onClick={() => setHasInvested(true)}>Simulate ₹500 investment <span>→</span></button></div>
+                    <p className="disclaimer investment-disclaimer">Prototype only. This button simulates the moment a real Groww investment flow would hand off to an existing product/order experience.</p>
+                  </>
+                ) : (
+                  <div className="invested-state completion">
+                    <div className="success-ring"><span>✓</span></div>
+                    <div className="eyebrow">FIRST STEP COMPLETE</div>
+                    <h1>You're officially<br /><span className="green-text">an investor.</span></h1>
+                    <p className="sub">₹500 is now your first milestone. The next goal is not to trade more — it's to keep building the habit.</p>
+                    <div className="milestone-card card"><div className="milestone-top"><span>YOUR PROGRESS</span><strong>₹500 / ₹1,000</strong></div><div className="investment-progress"><span style={{ width: '50%' }} /></div><div className="milestone-next"><span>Next milestone</span><b>Reach ₹1,000 invested</b></div></div>
+                    <div className="next-habit card"><span className="check">✓</span><div><b>Your next step</b><small>Set up a monthly investment you can sustain.</small></div></div>
+                    <button className="primary" onClick={() => { setHasInvested(false); setStep(0); }}>Restart the demo</button>
+                    <p className="disclaimer">Groww First is a case-study prototype. No real order is placed.</p>
+                  </div>
+                )}
               </section>
             )}
           </div>
