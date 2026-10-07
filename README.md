@@ -1,9 +1,12 @@
-# Groww First
+# Groww First — GenZ case-study prototype
 
-A one-day prototype for the Groww GenZ case study.
+A mobile-first prototype for the Groww GenZ case study.
 
 ## Product thesis
 Help a first-time investor understand their first investment before they buy it.
+
+## UX direction
+The prototype is intentionally closer to a polished Groww-style experience: bright white surfaces, strong black typography, restrained green accenting, rounded cards, progressive disclosure, mobile-first spacing, sticky CTA, slider input, micro-interactions, and a visual portfolio allocation.
 
 ## Stack
 - Next.js
