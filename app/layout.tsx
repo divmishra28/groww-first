@@ -1,10 +1,16 @@
-import "./globals.css";
+import './globals.css';
+import type { Metadata, Viewport } from 'next';
 
-export const viewport = { width: "device-width", initialScale: 1, viewportFit: "cover" };
+export const metadata: Metadata = {
+  title: 'Groww First',
+  description: 'A guided first-investment experience for GenZ investors'
+};
 
-export const metadata = {
-  title: "Groww First",
-  description: "A guided first-investment experience for GenZ investors"
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+  themeColor: '#ffffff'
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
