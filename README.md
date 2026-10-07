@@ -39,3 +39,11 @@ The answer is a guided entry point: start with the person's goal and comfortable
 ## Responsive design
 - **Desktop:** two-column case-study workspace with a persistent product rationale rail and a wider app canvas.
 - **Mobile:** immersive single-column app surface with full-width cards, touch-friendly controls and a sticky bottom CTA.
+
+## Live-app audit changes
+- Removed the misleading default selected goal; the user must choose a goal before continuing.
+- Replaced “investment experience” with risk comfort because it actually changes the illustrative allocation.
+- Hid the desktop product-rationale rail on mobile and reduced first-screen duplication.
+- Added a visible Back control for steps 2–4.
+- Clarified all allocation and outcome numbers as educational/illustrative rather than recommendations.
+- Added a compact “before you buy” comprehension check on the downside screen.
