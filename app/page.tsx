@@ -13,6 +13,28 @@ type Plan = {
   oneLiner: string;
 };
 
+type GamificationTab = 'Journey' | 'Missions' | 'Actions' | 'Learning';
+
+type Mission = {
+  id: string;
+  title: string;
+  detail: string;
+  xp: number;
+  kind: 'action' | 'learning';
+};
+
+const missions: Mission[] = [
+  { id: 'goal', title: 'Know your goal', detail: 'Choose what this money is meant to do.', xp: 25, kind: 'action' },
+  { id: 'downside', title: 'Understand the downside', detail: 'See what a difficult market period can feel like.', xp: 40, kind: 'learning' },
+  { id: 'first-investment', title: 'Make your first ₹500', detail: 'Complete your first investing milestone.', xp: 100, kind: 'action' }
+];
+
+const learningModules = [
+  { id: 'risk', title: 'Risk basics', detail: 'Why your portfolio can move up and down.', xp: 20 },
+  { id: 'sip', title: 'SIP basics', detail: 'How regular investing builds a habit.', xp: 20 },
+  { id: 'diversification', title: 'Diversification', detail: 'Why spreading exposure can reduce concentration risk.', xp: 20 }
+];
+
 const basePlans: Record<Goal, Plan> = {
   'Emergency fund': {
     title: 'Build a money buffer',
@@ -70,6 +92,9 @@ export default function Home() {
   const [risk, setRisk] = useState<RiskComfort>('Some ups & downs');
   const [question, setQuestion] = useState('Why this plan?');
   const [hasInvested, setHasInvested] = useState(false);
+  const [gamificationTab, setGamificationTab] = useState<GamificationTab>('Journey');
+  const [xp, setXp] = useState(0);
+  const [earned, setEarned] = useState<string[]>([]);
 
   const plan = goal ? basePlans[goal] : null;
   const split = goal ? adjustedSplit(goal, risk) : [45, 35, 20] as [number, number, number];
@@ -93,6 +118,15 @@ export default function Home() {
 
   const next = () => setStep((s) => Math.min(5, s + 1));
   const back = () => setStep((s) => Math.max(0, s - 1));
+  const awardXp = (id: string, points: number) => {
+    if (earned.includes(id)) return;
+    setEarned((items) => [...items, id]);
+    setXp((value) => value + points);
+  };
+
+  const journeyPercent = Math.min(100, Math.round((earned.filter((id) => ['goal', 'downside', 'first-investment'].includes(id)).length / 3) * 100));
+  const nextMission = missions.find((mission) => !earned.includes(mission.id));
+  const level = xp >= 200 ? 'Builder' : xp >= 100 ? 'Starter+' : 'Starter';
 
   return (
     <main className="site-shell">
@@ -126,6 +160,60 @@ export default function Home() {
             {[0, 1, 2, 3, 4, 5].map((i) => <div key={i} className={i <= step ? 'progress-line active' : 'progress-line'} />)}
           </div>
 
+          <section className="gamification-hub card" aria-label="Investor Journey">
+            <div className="hub-top">
+              <div>
+                <div className="mini-title">YOUR INVESTOR JOURNEY</div>
+                <div className="hub-title"><strong>{journeyPercent}% complete</strong><span>{level} · {xp} XP</span></div>
+              </div>
+              <div className="xp-chip">{xp} XP</div>
+            </div>
+            <div className="journey-bar"><span style={{ width: `${journeyPercent}%` }} /></div>
+            <div className="hub-tabs">
+              {(['Journey', 'Missions', 'Actions', 'Learning'] as GamificationTab[]).map((tab) => (
+                <button key={tab} className={gamificationTab === tab ? 'hub-tab active' : 'hub-tab'} onClick={() => setGamificationTab(tab)}>{tab}</button>
+              ))}
+            </div>
+            {gamificationTab === 'Journey' && (
+              <div className="journey-preview">
+                <div className={earned.includes('goal') ? 'journey-item done' : 'journey-item'}><span>{earned.includes('goal') ? '✓' : '1'}</span><div><b>Know your goal</b><small>Start with what this money is for.</small></div></div>
+                <div className={earned.includes('downside') ? 'journey-item done' : 'journey-item'}><span>{earned.includes('downside') ? '✓' : '2'}</span><div><b>Understand the downside</b><small>Know what can go wrong before investing.</small></div></div>
+                <div className={earned.includes('first-investment') ? 'journey-item done' : 'journey-item'}><span>{earned.includes('first-investment') ? '✓' : '3'}</span><div><b>Make your first ₹500</b><small>Turn understanding into action.</small></div></div>
+              </div>
+            )}
+            {gamificationTab === 'Missions' && (
+              <div className="mission-list">
+                {missions.map((mission) => (
+                  <button key={mission.id} className={earned.includes(mission.id) ? 'mission-card complete' : 'mission-card'} onClick={() => { if (mission.id === 'downside') { setStep(Math.max(step, 2)); } else if (mission.id === 'goal') { setStep(0); } else if (mission.id === 'first-investment') { setStep(5); } }}>
+                    <span className="mission-icon">{earned.includes(mission.id) ? '✓' : mission.kind === 'learning' ? '◌' : '→'}</span>
+                    <span className="mission-copy"><b>{mission.title}</b><small>{mission.detail}</small></span>
+                    <strong>+{mission.xp}</strong>
+                  </button>
+                ))}
+              </div>
+            )}
+            {gamificationTab === 'Actions' && (
+              <div className="action-grid">
+                <button onClick={() => setStep(0)}><span>01</span><b>Set your goal</b><small>Tell Groww First what you're investing for.</small></button>
+                <button onClick={() => setStep(4)}><span>02</span><b>Review your starting point</b><small>See the simple mix and why it exists.</small></button>
+                <button onClick={() => setStep(5)}><span>03</span><b>Take the first step</b><small>Simulate your first ₹500 investment.</small></button>
+              </div>
+            )}
+            {gamificationTab === 'Learning' && (
+              <div className="learning-list">
+                {learningModules.map((module) => (
+                  <button key={module.id} className={earned.includes(`learn-${module.id}`) ? 'learning-card complete' : 'learning-card'} onClick={() => awardXp(`learn-${module.id}`, module.xp)}>
+                    <span className="learning-icon">{earned.includes(`learn-${module.id}`) ? '✓' : '✦'}</span>
+                    <span><b>{module.title}</b><small>{module.detail}</small></span>
+                    <strong>+{module.xp} XP</strong>
+                  </button>
+                ))}
+              </div>
+            )}
+            {nextMission && <div className="next-mission"><span>NEXT UP</span><b>{nextMission.title}</b><small>{nextMission.xp} XP waiting</small></div>}
+            {!nextMission && <div className="next-mission complete"><span>JOURNEY COMPLETE</span><b>You’ve finished the current Groww First path.</b><small>Keep learning, invest consistently, and build the habit.</small></div>}
+          </section>
+
           <div key={step} className="step-transition">
             {step === 0 && (
               <section className="screen first-screen">
@@ -141,7 +229,7 @@ export default function Home() {
                     <div className="section-label">1. What are you investing for?</div>
                     <div className="goal-list">
                       {(Object.keys(goalMeta) as Goal[]).map((g) => (
-                        <button key={g} className={goal === g ? 'goal-card selected' : 'goal-card'} onClick={() => setGoal(g)}>
+                        <button key={g} className={goal === g ? 'goal-card selected' : 'goal-card'} onClick={() => { setGoal(g); awardXp('goal', 25); }}>
                           <span className="goal-icon">{goalMeta[g].icon}</span>
                           <span className="goal-copy"><strong>{g}</strong><small>{goalMeta[g].caption}</small></span>
                           <span className="radio">{goal === g ? '✓' : ''}</span>
@@ -264,7 +352,7 @@ export default function Home() {
                 </div>
 
                 <div className="before-buy-card card"><b>Before you invest, you should be able to answer:</b><span>What am I investing for?</span><span>How much can I keep investing?</span><span>What happens if markets fall?</span></div>
-                <div className="sticky-cta"><button className="primary" onClick={next}>I understand <span>→</span></button></div>
+                <div className="sticky-cta"><button className="primary" onClick={() => { awardXp('downside', 40); next(); }}>I understand <span>→</span></button></div>
               </section>
             )}
 
@@ -355,7 +443,7 @@ export default function Home() {
                       </aside>
                     </div>
 
-                    <div className="sticky-cta"><button className="primary" onClick={() => setHasInvested(true)}>Simulate ₹500 investment <span>→</span></button></div>
+                    <div className="sticky-cta"><button className="primary" onClick={() => { setHasInvested(true); awardXp('first-investment', 100); }}>Simulate ₹500 investment <span>→</span></button></div>
                     <p className="disclaimer investment-disclaimer">Prototype only. This button simulates the moment a real Groww investment flow would hand off to an existing product/order experience.</p>
                   </>
                 ) : (
