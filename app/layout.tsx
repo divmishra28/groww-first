@@ -1,5 +1,7 @@
 import "./globals.css";
 
+export const viewport = { width: "device-width", initialScale: 1, viewportFit: "cover" };
+
 export const metadata = {
   title: "Groww First",
   description: "A guided first-investment experience for GenZ investors"
