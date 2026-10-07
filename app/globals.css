@@ -15,5 +15,71 @@
 @media(max-width:430px){h1{font-size:39px}.app-frame{padding-left:13px;padding-right:13px}.goal-card{padding:10px 11px}.risk-card{min-width:156px}}
 
 /* Gamification layer */
-.gamification-hub{padding:13px 14px;margin:-10px 0 20px;background:linear-gradient(180deg,#fbfffd,#fff);border-color:#dfe9e5}.hub-top{display:flex;justify-content:space-between;align-items:flex-start;gap:15px}.hub-title{display:flex;gap:9px;align-items:baseline;margin-top:3px}.hub-title strong{font-size:14px;letter-spacing:-.3px}.hub-title span{font-size:9px;color:#777}.xp-chip{background:#111;color:#fff;border-radius:999px;padding:6px 9px;font-size:8px;font-weight:900;letter-spacing:.5px}.journey-bar{height:7px;background:#edf1ef;border-radius:999px;overflow:hidden;margin:9px 0 10px}.journey-bar span{display:block;height:100%;background:var(--green);border-radius:999px;transition:width .25s ease}.hub-tabs{display:flex;gap:5px;overflow-x:auto;padding-bottom:2px}.hub-tab{border:1px solid transparent;background:#f4f6f5;color:#777;border-radius:999px;padding:7px 10px;font-size:9px;font-weight:800;cursor:pointer;white-space:nowrap}.hub-tab.active{background:#111;color:#fff}.journey-preview,.mission-list,.learning-list{display:grid;gap:7px;margin-top:10px}.journey-item{display:flex;gap:9px;align-items:center;padding:9px 10px;background:#f7f9f8;border-radius:11px}.journey-item>span,.mission-icon,.learning-icon{width:22px;height:22px;border-radius:7px;background:#e8faf4;color:#0b8d70;display:grid;place-items:center;font-size:9px;font-weight:900;flex:none}.journey-item.done>span,.mission-card.complete .mission-icon,.learning-card.complete .learning-icon{background:var(--green);color:#083d32}.journey-item b{display:block;font-size:9px}.journey-item small{display:block;font-size:8px;color:#888;margin-top:2px}.mission-card,.learning-card{display:grid;grid-template-columns:22px 1fr auto;gap:9px;align-items:center;width:100%;text-align:left;border:1px solid #ecefec;background:#fff;border-radius:11px;padding:9px 10px;cursor:pointer}.mission-card:hover,.learning-card:hover,.action-grid button:hover{border-color:#b7e9dc;transform:translateY(-1px)}.mission-card strong,.learning-card strong{font-size:9px;color:#188b70}.mission-copy b,.learning-card b{display:block;font-size:9px}.mission-copy small,.learning-card small{display:block;color:#888;font-size:8px;line-height:1.25;margin-top:2px}.action-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:10px}.action-grid button{border:1px solid #ecefec;background:#fff;border-radius:11px;text-align:left;padding:10px;cursor:pointer}.action-grid button span{font-size:8px;font-weight:900;color:#79aa9e}.action-grid button b{display:block;font-size:9px;margin-top:5px}.action-grid button small{display:block;font-size:8px;line-height:1.3;color:#888;margin-top:3px}.next-mission{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px;margin-top:10px;padding:9px 10px;border-radius:11px;background:#f1faf7}.next-mission span{font-size:7px;font-weight:900;letter-spacing:1px;color:#2a8a74}.next-mission b{font-size:9px}.next-mission small{font-size:8px;color:#777}.next-mission.complete{grid-template-columns:1fr}.next-mission.complete b{margin-top:0}.next-mission.complete small{margin-top:0}
-@media(max-width:719px){.gamification-hub{margin:-7px 0 17px;padding:12px}.hub-title{display:block}.hub-title strong{font-size:13px}.hub-title span{display:block;margin-top:2px}.action-grid{grid-template-columns:1fr}.mission-card,.learning-card{padding:10px}.next-mission{grid-template-columns:auto 1fr}.next-mission small{display:none}.hub-tabs{gap:4px}.hub-tab{padding:7px 9px}}
+.gamification-hub{padding:13px 14px;margin:-10px 0 20px;background:linear-gradient(180deg,#fbfffd,#fff);border-color:#dfe9e5}.hub-top{display:flex;justify-content:space-between;align-items:flex-start;gap:15px}.hub-title{display:flex;gap:9px;align-items:baseline;margin-top:3px}.hub-title strong{font-size:14px;letter-spacing:-.3px}.hub-title span{font-size:9px;color:#777}.xp-chip{background:#111;color:#fff;border-radius:999px;padding:6px 9px;font-size:8px;font-weight:900;letter-spacing:.5px}.journey-bar{height:7px;background:#edf1ef;border-radius:999px;overflow:hidden;margin:9px 0 10px}.journey-bar span{display:block;height:100%;background:var(--green);border-radius:999px;transition:width .25s ease}.hub-tabs{display:flex;gap:5px;overflow-x:auto;padding-bottom:2px}.hub-tab{border:1px solid transparent;background:#f4f6f5;color:#777;border-radius:999px;padding:7px 10px;font-size:9px;font-weight:800;cursor:pointer;white-space:nowrap}.hub-tab.active{background:#111;color:#fff}.journey-preview,.learning-list{display:grid;gap:7px;margin-top:10px}.journey-item{display:flex;gap:9px;align-items:center;padding:9px 10px;background:#f7f9f8;border-radius:11px}.journey-item>span,.mission-icon,.learning-icon{width:22px;height:22px;border-radius:7px;background:#e8faf4;color:#0b8d70;display:grid;place-items:center;font-size:9px;font-weight:900;flex:none}.journey-item.done>span{background:var(--green);color:#083d32}.journey-item b{display:block;font-size:9px}.journey-item small{display:block;font-size:8px;color:#888;margin-top:2px}.next-mission{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px;margin-top:10px;padding:9px 10px;border-radius:11px;background:#f1faf7}.next-mission span{font-size:7px;font-weight:900;letter-spacing:1px;color:#2a8a74}.next-mission b{font-size:9px}.next-mission small{font-size:8px;color:#777}.next-mission.complete{grid-template-columns:1fr}.next-mission.complete b{margin-top:0}.next-mission.complete small{margin-top:0}
+@media(max-width:719px){.gamification-hub{margin:-7px 0 17px;padding:12px}.hub-title{display:block}.hub-title strong{font-size:13px}.hub-title span{display:block;margin-top:2px}.learning-card{padding:10px}.next-mission{grid-template-columns:auto 1fr}.next-mission small{display:none}.hub-tabs{gap:4px}.hub-tab{padding:7px 9px}}
+
+/* Final polish: Groww branding, charts, and dark mode */
+.rail-brand{display:flex;align-items:center;gap:9px}.rail-brand img,.brand-logo{width:34px;height:34px;object-fit:cover;object-position:center;clip-path:circle(49% at 50% 50%)}.rail-brand span{font-size:23px;font-weight:900;letter-spacing:-1px}.brand{gap:7px;justify-self:center}.brand-name{font-size:20px;font-weight:800;letter-spacing:-.9px}.theme-toggle{justify-self:end;border:1px solid var(--line);background:var(--soft);color:var(--ink);border-radius:999px;padding:7px 10px;font-size:9px;font-weight:850;cursor:pointer;display:flex;align-items:center;gap:5px}.theme-toggle span{font-size:12px;line-height:1}.hub-tabs{max-width:220px}.journey-item{grid-template-columns:22px 1fr auto}.journey-item>strong{font-size:8px;color:#188b70;white-space:nowrap}.learning-card{transition:.18s}.donut-interactive{position:relative;width:190px;height:190px;display:grid;place-items:center}.donut-svg{width:190px;height:190px;overflow:visible}.donut-segment{cursor:pointer;transition:opacity .15s,transform .15s;transform-origin:110px 110px}.donut-segment:hover,.donut-segment.active{opacity:.82;filter:saturate(1.08)}.donut-center{fill:var(--surface)}.donut-interactive .donut-hole{position:absolute;inset:0;pointer-events:none}.chart-wrap{position:relative}.chart-point{cursor:pointer;transition:r .12s,opacity .12s}.chart-point:hover{r:7}.chart-tooltip{position:absolute;z-index:4;min-width:120px;max-width:190px;padding:8px 9px;border-radius:10px;background:#121212;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.18);pointer-events:none;display:grid;gap:2px}.chart-tooltip b{font-size:9px}.chart-tooltip span{font-size:10px;color:#cbfff0}.chart-tooltip small{font-size:7px;color:#aaa;line-height:1.25}.donut-tooltip{left:50%;top:2%;transform:translateX(-50%)}.performance-tooltip{transform:translate(-50%,-100%)}.allocation-sublist{margin:-3px 0 4px 28px;padding-left:9px;border-left:1px solid var(--line);display:grid;gap:2px}.allocation-subrow{display:flex;justify-content:space-between;gap:8px;font-size:8px;color:var(--muted)}.allocation-subrow strong{font-size:8px;color:var(--ink)}.education-card>div em{display:block;font-size:8px;color:var(--green-dark);font-style:normal;margin-top:3px}.mini-suballocation{display:flex;gap:7px;flex-wrap:wrap;margin:-1px 0 5px 27px;font-size:8px;color:var(--muted)}
+
+[data-theme="dark"]{--green:#00d09c;--green-dark:#2de2b4;--ink:#f3f6f5;--muted:#a8b0ad;--surface:#171a19;--line:#303634;--soft:#202422;--bg:#0b0e0d;--shadow:0 20px 70px rgba(0,0,0,.34)}
+[data-theme="dark"] .site-shell{background:var(--bg)}
+[data-theme="dark"] .desktop-rail{color:var(--ink)}
+[data-theme="dark"] .desktop-rail>p,.dark-mode .rail-note small,.dark-mode .rail-steps small{color:#8f9995}
+[data-theme="dark"] .rail-contrast>div{background:#151918;border-color:#2d3431}
+[data-theme="dark"] .rail-highlight{background:#11251f!important;border-color:#236c5b!important}
+[data-theme="dark"] .rail-arrow{color:#4b776b!important}
+[data-theme="dark"] .rail-steps>div>span{background:#16352d;color:#53c7a9}
+[data-theme="dark"] .app-frame{background:#131615;border-color:#2b302e}
+[data-theme="dark"] .back-btn.visible{color:#b6bfbb}
+[data-theme="dark"] .theme-toggle{background:#202422;color:#eef4f1;border-color:#353c39}
+[data-theme="dark"] .progress-line{background:#303532}
+[data-theme="dark"] .progress-line.active{background:var(--green)}
+[data-theme="dark"] .goal-card,.dark-mode .risk-card,.dark-mode .learning-card{background:#171b19;border-color:#303633;color:var(--ink)}
+[data-theme="dark"] .goal-card.selected,.dark-mode .risk-card.active{background:#12251f;border-color:#2a8e77}
+[data-theme="dark"] .amount-card,.dark-mode .card{background:var(--surface);border-color:var(--line);box-shadow:0 10px 30px rgba(0,0,0,.14)}
+[data-theme="dark"] .income-context,.dark-mode .journey-item{background:#1c2824;color:#aeb8b4}
+[data-theme="dark"] .thesis-card{background:linear-gradient(180deg,#18251f,#121a17);border-color:#2b443b}
+[data-theme="dark"] .thesis-badge,.dark-mode .rail-eyebrow,.dark-mode .eyebrow{color:#77b9a8}
+[data-theme="dark"] .thesis-time{background:#1e3730;color:#a8dacc}
+[data-theme="dark"] .desktop-value-card,.dark-mode .before-buy-card{background:#161a18;border-color:#2d3431}
+[data-theme="dark"] .first-screen-proof{border-color:#27302c}
+[data-theme="dark"] .spark{background:#17372e;color:#73e3c5}
+[data-theme="dark"] .plan-visual-top,.dark-mode .muted{color:#9ca7a3}
+[data-theme="dark"] .donut-center{fill:#171a19}
+[data-theme="dark"] .stacked-bar{background:#252b28}
+[data-theme="dark"] .reason-card,.dark-mode .summary-hero,.dark-mode .starting-point-card,.dark-mode .guardrail-card,.dark-mode .investment-card,.dark-mode .why-invest-card,.dark-mode .milestone-card,.dark-mode .next-habit{background:#171b19}
+[data-theme="dark"] .info-strip{background:#1b211f;border-color:#303733;color:#adb8b3}
+[data-theme="dark"] .education-card>div,.dark-mode .summary-chips span,.dark-mode .small-callout{background:#1b211f;border-color:#303733;color:#adb6b2}
+[data-theme="dark"] .prototype-note,.dark-mode .disclaimer,.dark-mode .footer{color:#77817e}
+[data-theme="dark"] .chart-card{background:#171b19}
+[data-theme="dark"] .chart-labels{color:#7f8985}
+[data-theme="dark"] .scenario{background:#171b19;border-color:#303633}
+[data-theme="dark"] .scenario.highlight{background:#12251f;border-color:#236f5b}
+[data-theme="dark"] .coach-card{background:#171b19}
+[data-theme="dark"] .question{background:#1d2321;border-color:#303633;color:#bec6c2}
+[data-theme="dark"] .question.active{background:#14362d;border-color:#2a8e77;color:#e6fff8}
+[data-theme="dark"] .answer{background:#1c2824;color:#bdc7c3}
+[data-theme="dark"] .completion .success-ring{background:#153128}
+[data-theme="dark"] .success-ring span{color:#05231c}
+[data-theme="dark"] .check{background:#15352d;color:#50d8b3}
+[data-theme="dark"] .first-investment-badge{background:#10251f;color:#83e3c7}
+[data-theme="dark"] .investment-progress{background:#2a302d}
+[data-theme="dark"] .milestone-card,.dark-mode .next-habit{border-color:#303633}
+[data-theme="dark"] .sticky-cta{background:linear-gradient(180deg,rgba(19,22,21,0),#131615 25%)}
+[data-theme="dark"] .mobile-trust{color:#717b77}
+[data-theme="dark"] .gamification-hub{background:linear-gradient(180deg,#15211d,#171a19);border-color:#294139}
+[data-theme="dark"] .hub-tab{background:#202522;color:#a7b1ad}
+[data-theme="dark"] .hub-tab.active{background:#f3f7f5;color:#101412}
+[data-theme="dark"] .journey-item>span,.dark-mode .learning-icon{background:#17382e;color:#5bd8b7}
+[data-theme="dark"] .journey-item.done>span,.dark-mode .learning-card.complete .learning-icon{background:var(--green);color:#08261f}
+[data-theme="dark"] .journey-item>strong,.dark-mode .learning-card strong{color:#68d5ba}
+[data-theme="dark"] .next-mission{background:#173028;color:#dce8e4}
+[data-theme="dark"] .allocation-sublist{border-color:#34413c}
+[data-theme="dark"] .allocation-subrow,.dark-mode .mini-suballocation{color:#8f9b96}
+[data-theme="dark"] .allocation-subrow strong{color:#d6dfdb}
+[data-theme="dark"] .chart-tooltip{background:#f3f6f5;color:#101412;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+[data-theme="dark"] .chart-tooltip span{color:#147b63}
+[data-theme="dark"] .chart-tooltip small{color:#66716d}
+[data-theme="dark"] .footer{color:#66706c}
+
+@media(max-width:719px){.brand-logo{width:30px;height:30px}.brand-name{font-size:17px}.theme-toggle{font-size:8px;padding:6px 8px}.donut-interactive{width:145px;height:145px}.donut-svg{width:145px;height:145px}.journey-item{grid-template-columns:22px 1fr auto}.chart-tooltip{min-width:112px}.performance-tooltip{transform:translate(-50%,-110%)}}

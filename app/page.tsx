@@ -13,22 +13,6 @@ type Plan = {
   oneLiner: string;
 };
 
-type GamificationTab = 'Journey' | 'Missions' | 'Actions' | 'Learning';
-
-type Mission = {
-  id: string;
-  title: string;
-  detail: string;
-  xp: number;
-  kind: 'action' | 'learning';
-};
-
-const missions: Mission[] = [
-  { id: 'goal', title: 'Know your goal', detail: 'Choose what this money is meant to do.', xp: 25, kind: 'action' },
-  { id: 'downside', title: 'Understand the downside', detail: 'See what a difficult market period can feel like.', xp: 40, kind: 'learning' },
-  { id: 'first-investment', title: 'Make your first ₹500', detail: 'Complete your first investing milestone.', xp: 100, kind: 'action' }
-];
-
 const learningModules = [
   { id: 'risk', title: 'Risk basics', detail: 'Why your portfolio can move up and down.', xp: 20 },
   { id: 'sip', title: 'SIP basics', detail: 'How regular investing builds a habit.', xp: 20 },
@@ -71,8 +55,13 @@ const riskMeta: Record<RiskComfort, string> = {
   'Comfortable with swings': 'I can stay invested through big drops.'
 };
 
-const allocationLabels = ['Growth', 'Stability', 'Diversifier'];
+const allocationLabels = ['Equity', 'Debt', 'Gold'];
 const allocationColors = ['#00d09c', '#d8f3ed', '#181818'];
+
+const equitySubBuckets = [
+  { label: 'Stocks', share: 60 },
+  { label: 'Mutual Funds', share: 40 },
+];
 
 function formatINR(value: number) {
   return `₹${Math.max(0, value).toLocaleString('en-IN')}`;
@@ -85,6 +74,18 @@ function adjustedSplit(goal: Goal, risk: RiskComfort): [number, number, number] 
   return base;
 }
 
+function polarToCartesian(cx: number, cy: number, radius: number, angleInDegrees: number) {
+  const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180;
+  return { x: cx + radius * Math.cos(angleInRadians), y: cy + radius * Math.sin(angleInRadians) };
+}
+
+function donutArcPath(cx: number, cy: number, radius: number, startAngle: number, endAngle: number) {
+  const start = polarToCartesian(cx, cy, radius, endAngle);
+  const end = polarToCartesian(cx, cy, radius, startAngle);
+  const largeArcFlag = endAngle - startAngle <= 180 ? '0' : '1';
+  return `M ${cx} ${cy} L ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} 0 ${end.x} ${end.y} Z`;
+}
+
 export default function Home() {
   const [step, setStep] = useState(0);
   const [goal, setGoal] = useState<Goal | null>(null);
@@ -92,9 +93,11 @@ export default function Home() {
   const [risk, setRisk] = useState<RiskComfort>('Some ups & downs');
   const [question, setQuestion] = useState('Why this plan?');
   const [hasInvested, setHasInvested] = useState(false);
-  const [gamificationTab, setGamificationTab] = useState<GamificationTab>('Journey');
+  const [gamificationTab, setGamificationTab] = useState<'Journey' | 'Learning'>('Journey');
   const [xp, setXp] = useState(0);
   const [earned, setEarned] = useState<string[]>([]);
+  const [darkMode, setDarkMode] = useState(false);
+  const [chartTooltip, setChartTooltip] = useState<{ type: 'allocation' | 'performance'; index: number; x: number; y: number } | null>(null);
 
   const plan = goal ? basePlans[goal] : null;
   const split = goal ? adjustedSplit(goal, risk) : [45, 35, 20] as [number, number, number];
@@ -125,21 +128,21 @@ export default function Home() {
   };
 
   const journeyPercent = Math.min(100, Math.round((earned.filter((id) => ['goal', 'downside', 'first-investment'].includes(id)).length / 3) * 100));
-  const nextMission = missions.find((mission) => !earned.includes(mission.id));
+  const nextLearning = learningModules.find((module) => !earned.includes(`learn-${module.id}`));
   const level = xp >= 200 ? 'Builder' : xp >= 100 ? 'Starter+' : 'Starter';
 
   return (
-    <main className="site-shell">
+    <main className={darkMode ? 'site-shell dark-mode' : 'site-shell'} data-theme={darkMode ? 'dark' : 'light'}>
       <div className="desktop-layout">
         <aside className="desktop-rail">
-          <div className="rail-brand"><span>groww</span> first</div>
+          <div className="rail-brand"><img src="/groww.png" alt="Groww" /><span>Groww First</span></div>
           <div className="rail-eyebrow">PRODUCT THESIS</div>
           <h2>Don't start with a stock.<br /><span>Start with yourself.</span></h2>
           <p>Groww First is a guided layer before the catalogue. It helps a new investor understand a sensible starting point before seeing products.</p>
           <div className="rail-contrast">
-            <div><span>NORMAL GROWW</span><b>“What should I buy?”</b></div>
+            <div><span>Groww</span><b>“What should I buy?”</b></div>
             <div className="rail-arrow">↓</div>
-            <div className="rail-highlight"><span>GROWW FIRST</span><b>“What makes sense for me?”</b></div>
+            <div className="rail-highlight"><span>Groww First</span><b>“What makes sense for me?”</b></div>
           </div>
           <div className="rail-steps">
             <div><span>01</span><div><b>Goal</b><small>Start with the purpose</small></div></div>
@@ -152,8 +155,10 @@ export default function Home() {
         <div className="app-frame">
           <header className="topbar">
             <button className={step > 0 ? 'back-btn visible' : 'back-btn'} onClick={back} aria-label="Go back">← <span>Back</span></button>
-            <div className="brand" aria-label="Groww First"><span className="brand-groww">groww</span><span className="brand-first">first</span></div>
-            <div className="demo-badge">PROTOTYPE</div>
+            <div className="brand" aria-label="Groww First"><img src="/groww.png" alt="Groww" className="brand-logo" /><span className="brand-name">Groww First</span></div>
+            <button className="theme-toggle" type="button" onClick={() => setDarkMode((value) => !value)} aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}>
+              <span>{darkMode ? "☀" : "☾"}</span>{darkMode ? "Light" : "Dark"}
+            </button>
           </header>
 
           <div className="progress" aria-label={`Step ${step + 1} of 6`}>
@@ -170,33 +175,15 @@ export default function Home() {
             </div>
             <div className="journey-bar"><span style={{ width: `${journeyPercent}%` }} /></div>
             <div className="hub-tabs">
-              {(['Journey', 'Missions', 'Actions', 'Learning'] as GamificationTab[]).map((tab) => (
+              {(['Journey', 'Learning'] as const).map((tab) => (
                 <button key={tab} className={gamificationTab === tab ? 'hub-tab active' : 'hub-tab'} onClick={() => setGamificationTab(tab)}>{tab}</button>
               ))}
             </div>
             {gamificationTab === 'Journey' && (
               <div className="journey-preview">
-                <div className={earned.includes('goal') ? 'journey-item done' : 'journey-item'}><span>{earned.includes('goal') ? '✓' : '1'}</span><div><b>Know your goal</b><small>Start with what this money is for.</small></div></div>
-                <div className={earned.includes('downside') ? 'journey-item done' : 'journey-item'}><span>{earned.includes('downside') ? '✓' : '2'}</span><div><b>Understand the downside</b><small>Know what can go wrong before investing.</small></div></div>
-                <div className={earned.includes('first-investment') ? 'journey-item done' : 'journey-item'}><span>{earned.includes('first-investment') ? '✓' : '3'}</span><div><b>Make your first ₹500</b><small>Turn understanding into action.</small></div></div>
-              </div>
-            )}
-            {gamificationTab === 'Missions' && (
-              <div className="mission-list">
-                {missions.map((mission) => (
-                  <button key={mission.id} className={earned.includes(mission.id) ? 'mission-card complete' : 'mission-card'} onClick={() => { if (mission.id === 'downside') { setStep(Math.max(step, 2)); } else if (mission.id === 'goal') { setStep(0); } else if (mission.id === 'first-investment') { setStep(5); } }}>
-                    <span className="mission-icon">{earned.includes(mission.id) ? '✓' : mission.kind === 'learning' ? '◌' : '→'}</span>
-                    <span className="mission-copy"><b>{mission.title}</b><small>{mission.detail}</small></span>
-                    <strong>+{mission.xp}</strong>
-                  </button>
-                ))}
-              </div>
-            )}
-            {gamificationTab === 'Actions' && (
-              <div className="action-grid">
-                <button onClick={() => setStep(0)}><span>01</span><b>Set your goal</b><small>Tell Groww First what you're investing for.</small></button>
-                <button onClick={() => setStep(4)}><span>02</span><b>Review your starting point</b><small>See the simple mix and why it exists.</small></button>
-                <button onClick={() => setStep(5)}><span>03</span><b>Take the first step</b><small>Simulate your first ₹500 investment.</small></button>
+                <div className={earned.includes('goal') ? 'journey-item done' : 'journey-item'}><span>{earned.includes('goal') ? '✓' : '1'}</span><div><b>Know your goal</b><small>Start with what this money is for.</small></div><strong>+25 XP</strong></div>
+                <div className={earned.includes('downside') ? 'journey-item done' : 'journey-item'}><span>{earned.includes('downside') ? '✓' : '2'}</span><div><b>Understand the downside</b><small>Know what can go wrong before investing.</small></div><strong>+40 XP</strong></div>
+                <div className={earned.includes('first-investment') ? 'journey-item done' : 'journey-item'}><span>{earned.includes('first-investment') ? '✓' : '3'}</span><div><b>Make your first ₹500</b><small>Turn understanding into action.</small></div><strong>+100 XP</strong></div>
               </div>
             )}
             {gamificationTab === 'Learning' && (
@@ -210,16 +197,15 @@ export default function Home() {
                 ))}
               </div>
             )}
-            {nextMission && <div className="next-mission"><span>NEXT UP</span><b>{nextMission.title}</b><small>{nextMission.xp} XP waiting</small></div>}
-            {!nextMission && <div className="next-mission complete"><span>JOURNEY COMPLETE</span><b>You’ve finished the current Groww First path.</b><small>Keep learning, invest consistently, and build the habit.</small></div>}
+            {nextLearning ? <div className="next-mission"><span>NEXT UP</span><b>{nextLearning.title}</b><small>{nextLearning.xp} XP waiting</small></div> : <div className="next-mission complete"><span>LEARNING COMPLETE</span><b>You’ve completed the current learning set.</b><small>Keep investing consistently and building the habit.</small></div>}
           </section>
 
           <div key={step} className="step-transition">
             {step === 0 && (
               <section className="screen first-screen">
                 <div className="first-intro">
-                  <div className="eyebrow">GROWW FIRST · FIRST INVESTMENT</div>
-                  <div className="hero-kicker">Normal Groww helps you <span>pick a product.</span></div>
+                  <div className="eyebrow">Groww First · First Investment</div>
+                  <div className="hero-kicker">Groww helps you <span>pick a product.</span></div>
                   <h1>Your first paycheck deserves a <span className="green-text">starting point.</span></h1>
                   <p className="sub hero-sub">Tell us what you’re trying to do with your money. We’ll turn it into a simple plan you can actually understand.</p>
                 </div>
@@ -240,8 +226,8 @@ export default function Home() {
                     <div className="section-label income-title">2. What feels comfortable to invest each month?</div>
                     <div className="amount-card">
                       <div className="amount-head"><span>Monthly investment</span><strong>{formatINR(monthly)}</strong></div>
-                      <input className="range" type="range" min="500" max="15000" step="500" value={monthly} onChange={(e) => setMonthly(Number(e.target.value))} aria-label="Monthly investment" />
-                      <div className="range-labels"><span>₹500</span><span>₹15,000</span></div>
+                      <input className="range" type="range" min="500" max="1000000" step="1000" value={monthly} onChange={(e) => setMonthly(Number(e.target.value))} aria-label="Monthly investment" />
+                      <div className="range-labels"><span>₹500</span><span>₹10,00,000</span></div>
                       <div className="income-context"><b>Keep it sustainable.</b> Pick an amount you could keep investing every month without stressing your budget.</div>
                     </div>
 
@@ -277,7 +263,7 @@ export default function Home() {
                   </aside>
                 </div>
 
-                <div className="mobile-trust">No account needed · Takes about 2 minutes · Educational prototype</div>
+                <div className="mobile-trust">No account needed · Takes about 2 minutes · Prototype</div>
                 <div className="sticky-cta"><button className="primary" disabled={!goal} onClick={next}>Build my first plan <span>→</span></button></div>
               </section>
             )}
@@ -289,13 +275,33 @@ export default function Home() {
 
                 <div className="plan-desktop-grid">
                   <div className="plan-visual card">
-                    <div className="plan-visual-top"><span>Illustrative monthly mix</span><span className="muted">Learning prototype</span></div>
+                    <div className="plan-visual-top"><span>Monthly mix</span></div>
                     <div className="donut-wrap">
-                      <div className="donut" style={{ background: `conic-gradient(${allocationColors[0]} 0 ${split[0]}%, ${allocationColors[1]} ${split[0]}% ${split[0] + split[1]}%, ${allocationColors[2]} ${split[0] + split[1]}% 100%)` }}>
+                      <div className="donut-interactive">
+                        <svg viewBox="0 0 220 220" className="donut-svg" aria-label="Interactive monthly allocation chart">
+                          {(() => {
+                            let cursor = 0;
+                            return split.map((pct, i) => {
+                              const start = cursor * 3.6;
+                              const end = (cursor + pct) * 3.6;
+                              cursor += pct;
+                              return <path key={allocationLabels[i]} d={donutArcPath(110, 110, 96, start, end)} fill={allocationColors[i]} className={chartTooltip?.type === 'allocation' && chartTooltip.index === i ? 'donut-segment active' : 'donut-segment'} onMouseEnter={() => setChartTooltip({ type: 'allocation', index: i, x: 50, y: 8 })} onMouseLeave={() => setChartTooltip(null)} onFocus={() => setChartTooltip({ type: 'allocation', index: i, x: 50, y: 8 })} onBlur={() => setChartTooltip(null)} tabIndex={0} />;
+                            });
+                          })()}
+                          <circle cx="110" cy="110" r="58" className="donut-center" />
+                        </svg>
                         <div className="donut-hole"><strong>{formatINR(monthly)}</strong><span>per month</span></div>
+                        {chartTooltip?.type === 'allocation' && <div className="chart-tooltip donut-tooltip"><b>{allocationLabels[chartTooltip.index]}</b><span>{split[chartTooltip.index]}% · {formatINR(Math.round(monthly * split[chartTooltip.index] / 100))}</span>{chartTooltip.index === 0 && <small>Stocks {Math.round(equitySubBuckets[0].share)}% · Mutual Funds {Math.round(equitySubBuckets[1].share)}%</small>}</div>}
                       </div>
                       <div className="allocation-list">
-                        {allocationLabels.map((label, i) => <div className="allocation-row" key={label}><span className="allocation-name"><i style={{ background: allocationColors[i] }} />{label}</span><strong>{formatINR(Math.round(monthly * split[i] / 100))}</strong></div>)}
+                        {allocationLabels.map((label, i) => (
+                          <div key={label}>
+                            <div className="allocation-row" onMouseEnter={() => setChartTooltip({ type: 'allocation', index: i, x: 50, y: 8 })} onMouseLeave={() => setChartTooltip(null)}><span className="allocation-name"><i style={{ background: allocationColors[i] }} />{label}</span><strong>{formatINR(Math.round(monthly * split[i] / 100))}</strong></div>
+                            {label === 'Equity' && <div className="allocation-sublist">
+                              {equitySubBuckets.map((bucket) => <div className="allocation-subrow" key={bucket.label}><span>{bucket.label}</span><strong>{formatINR(Math.round(monthly * split[i] * bucket.share / 10000))}</strong></div>)}
+                            </div>}
+                          </div>
+                        ))}
                       </div>
                     </div>
                     <div className="stacked-bar">{split.map((pct, i) => <span key={i} style={{ width: `${pct}%`, background: allocationColors[i] }} />)}</div>
@@ -304,7 +310,7 @@ export default function Home() {
                   <div className="plan-side">
                     <div className="reason-card card"><div className="assistant-mark">g</div><div><div className="mini-title">WHY THIS MIX?</div><p>{plan?.note}</p></div></div>
                     <div className="info-strip"><span>Goal</span><b>{goal}</b><span className="dot">•</span><span>Horizon</span><b>{plan?.horizon}</b></div>
-                    <div className="education-card card"><div className="mini-title">WHAT EACH BUCKET DOES</div><div><b>Growth</b><span>Potential to grow over time</span></div><div><b>Stability</b><span>Helps reduce portfolio swings</span></div><div><b>Diversifier</b><span>Can behave differently from equities</span></div></div>
+                    <div className="education-card card"><div className="mini-title">WHAT EACH BUCKET DOES</div><div><b>Equity</b><span>Growth exposure, split between stocks and mutual funds.</span><em>Stocks 60% · Mutual Funds 40%</em></div><div><b>Debt</b><span>Helps reduce portfolio swings.</span></div><div><b>Gold</b><span>Can behave differently from equities.</span></div></div>
                     <div className="prototype-note">Illustrative mix only. No real product or order is being recommended here.</div>
                   </div>
                 </div>
@@ -322,15 +328,23 @@ export default function Home() {
                 <div className="downside-grid">
                   <div className="downside-main">
                     <div className="chart-card card">
-                      <div className="chart-head"><div><span className="muted small">Illustrative value after {years} years</span><strong>{formatINR(illustrative)}</strong></div><span className="horizon-pill">Demo · not a forecast</span></div>
-                      <svg viewBox="0 0 600 220" className="chart" role="img" aria-label="Illustrative investment path">
-                        <defs><linearGradient id="areaFade" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stopColor="#00d09c" stopOpacity=".22"/><stop offset="100%" stopColor="#00d09c" stopOpacity="0"/></linearGradient></defs>
-                        <path d={`M10 184 L${chartPoints} L590 205 L10 205 Z`} fill="url(#areaFade)" />
-                        <path d={`M10 184 L${chartPoints}`} fill="none" stroke="#00a980" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
-                        <line x1="10" y1="205" x2="590" y2="205" stroke="#ddd" />
-                        <line x1="10" y1="145" x2="590" y2="145" stroke="#eee" strokeDasharray="4 6" />
-                        <line x1="10" y1="85" x2="590" y2="85" stroke="#eee" strokeDasharray="4 6" />
-                      </svg>
+                      <div className="chart-head"><div><span className="muted small">Value after {years} years</span><strong>{formatINR(illustrative)}</strong></div><span className="horizon-pill">Demo · not a forecast</span></div>
+                      <div className="chart-wrap">
+                        <svg viewBox="0 0 600 220" className="chart" role="img" aria-label="Interactive illustrative investment path">
+                          <defs><linearGradient id="areaFade" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stopColor="#00d09c" stopOpacity=".22"/><stop offset="100%" stopColor="#00d09c" stopOpacity="0"/></linearGradient></defs>
+                          <path d={`M10 184 L${chartPoints} L590 205 L10 205 Z`} fill="url(#areaFade)" />
+                          <path d={`M10 184 L${chartPoints}`} fill="none" stroke="#00a980" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
+                          <line x1="10" y1="205" x2="590" y2="205" stroke="#ddd" />
+                          <line x1="10" y1="145" x2="590" y2="145" stroke="#eee" strokeDasharray="4 6" />
+                          <line x1="10" y1="85" x2="590" y2="85" stroke="#eee" strokeDasharray="4 6" />
+                          {chartPoints.split(',').map((point, i) => {
+                            const [x, y] = point.trim().split(' ').map(Number);
+                            const pointValue = Math.round(invested * (0.9 + ((184 - y) / 150) * 0.55));
+                            return <circle key={`${x}-${y}`} cx={x} cy={y} r={chartTooltip?.type === 'performance' && chartTooltip.index === i ? 7 : 5} fill="#00a980" className="chart-point" onMouseEnter={() => setChartTooltip({ type: 'performance', index: i, x: x / 6, y: y / 2.2 })} onMouseLeave={() => setChartTooltip(null)} onFocus={() => setChartTooltip({ type: 'performance', index: i, x: x / 6, y: y / 2.2 })} onBlur={() => setChartTooltip(null)} tabIndex={0} />;
+                          })}
+                        </svg>
+                        {chartTooltip?.type === 'performance' && (() => { const point = chartPoints.split(',')[chartTooltip.index].trim().split(' ').map(Number); const value = Math.round(invested * (0.9 + ((184 - point[1]) / 150) * 0.55)); return <div className="chart-tooltip performance-tooltip" style={{ left: `${chartTooltip.x}%`, top: `${Math.max(4, chartTooltip.y - 13)}%` }}><b>{chartTooltip.index === 0 ? 'Start' : `Point ${chartTooltip.index}`}</b><span>{formatINR(value)}</span><small>Illustrative only · not a forecast</small></div>; })()}
+                      </div>
                       <div className="chart-labels"><span>Start</span><span>Market ups & downs</span><span>{years} years</span></div>
                     </div>
                     <div className="scenario-grid">
@@ -369,7 +383,7 @@ export default function Home() {
                   <div><span className="check">✓</span>Know why the mix exists</div>
                 </div>
                 <button className="primary" onClick={next}>Continue to my first investment <span>→</span></button>
-                <p className="disclaimer">Groww First is a case-study prototype. It does not place real orders or provide financial advice.</p>
+                <p className="disclaimer">Groww First does not place real orders.</p>
               </section>
             )}
 
@@ -393,8 +407,8 @@ export default function Home() {
                     <div className="starting-point-card card">
                       <div className="starting-point-head"><div><div className="mini-title">YOUR SIMPLE START</div><h2>{plan?.title ?? 'Build long-term wealth'}</h2></div><div className="starting-amount">{formatINR(monthly)}<small>/ month</small></div></div>
                       <div className="simple-start-copy">{plan?.oneLiner ?? 'Give compounding more room to work.'}</div>
-                      <div className="mini-allocation">{allocationLabels.map((label, i) => <div key={label} className="mini-allocation-row"><span><i style={{ background: allocationColors[i] }} />{label}</span><strong>{split[i]}%</strong></div>)}</div>
-                      <div className="prototype-note">This is an educational starting mix, not a product recommendation. In the real Groww flow, this is the point where the user could explore suitable products.</div>
+                      <div className="mini-allocation">{allocationLabels.map((label, i) => <div key={label}><div className="mini-allocation-row"><span><i style={{ background: allocationColors[i] }} />{label}</span><strong>{split[i]}%</strong></div>{label === 'Equity' && <div className="mini-suballocation"><span>Stocks {Math.round(split[i] * 0.6)}%</span><span>Mutual Funds {Math.round(split[i] * 0.4)}%</span></div>}</div>)}</div>
+                      <div className="prototype-note"></div>
                     </div>
                   </div>
 
@@ -455,13 +469,13 @@ export default function Home() {
                     <div className="milestone-card card"><div className="milestone-top"><span>YOUR PROGRESS</span><strong>₹500 / ₹1,000</strong></div><div className="investment-progress"><span style={{ width: '50%' }} /></div><div className="milestone-next"><span>Next milestone</span><b>Reach ₹1,000 invested</b></div></div>
                     <div className="next-habit card"><span className="check">✓</span><div><b>Your next step</b><small>Set up a monthly investment you can sustain.</small></div></div>
                     <button className="primary" onClick={() => { setHasInvested(false); setStep(0); }}>Restart the demo</button>
-                    <p className="disclaimer">Groww First is a case-study prototype. No real order is placed.</p>
+                    
                   </div>
                 )}
               </section>
             )}
           </div>
-          <footer className="footer">Groww First · Case study prototype</footer>
+          <footer className="footer">Groww First · Prototype</footer>
         </div>
       </div>
     </main>
