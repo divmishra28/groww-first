@@ -93,10 +93,25 @@ export default function Home() {
 
         <div key={step} className="step-transition">
           {step === 0 && (
-            <section className="screen">
-              <div className="eyebrow">FIRST INVESTMENT</div>
-              <h1>Start with your <span className="green-text">why.</span></h1>
-              <p className="sub">Answer three quick questions. We’ll turn them into a simple investing starting point.</p>
+            <section className="screen first-screen">
+              <div className="eyebrow">GROWW FIRST</div>
+              <div className="hero-kicker">Normal Groww helps you <span>pick a product.</span></div>
+              <h1>Your first paycheck deserves a <span className="green-text">starting point.</span></h1>
+              <p className="sub hero-sub">Tell us what you’re trying to do with your money. We’ll turn it into a simple plan you can actually understand.</p>
+
+              <div className="thesis-card">
+                <div className="thesis-top">
+                  <span className="thesis-badge">WHY THIS EXISTS</span>
+                  <span className="thesis-time">~2 min</span>
+                </div>
+                <div className="thesis-flow">
+                  <div><span>01</span><b>Tell me about you</b><small>Goal · amount · comfort</small></div>
+                  <i>→</i>
+                  <div><span>02</span><b>Show me a plan</b><small>Simple, not overwhelming</small></div>
+                  <i>→</i>
+                  <div><span>03</span><b>Let me understand</b><small>Upside · downside · why</small></div>
+                </div>
+              </div>
 
               <div className="section-label">What are you investing for?</div>
               <div className="goal-list">
@@ -109,22 +124,27 @@ export default function Home() {
                 ))}
               </div>
 
-              <div className="section-label income-title">And how much can you comfortably invest?</div>
+              <div className="section-label income-title">What feels comfortable to invest each month?</div>
               <div className="amount-card">
                 <div className="amount-head"><span>Monthly investment</span><strong>{formatINR(monthly)}</strong></div>
                 <input className="range" type="range" min="500" max="15000" step="500" value={monthly} onChange={(e) => setMonthly(Number(e.target.value))} aria-label="Monthly investment" />
                 <div className="range-labels"><span>₹500</span><span>₹15,000</span></div>
-                <div className="income-context">That’s about <b>{monthlyPercentOfIncome}%</b> of your ₹{income.toLocaleString("en-IN")} monthly income.</div>
+                <div className="income-context"><b>No need to optimize this number.</b> Pick an amount you could keep investing every month.</div>
               </div>
 
-              <div className="section-label">How comfortable are you?</div>
+              <div className="section-label">How new are you to investing?</div>
               <div className="chip-row">
                 {(["Completely new", "I know the basics", "I already invest"] as Experience[]).map((e) => (
                   <button key={e} className={experience === e ? "chip active" : "chip"} onClick={() => setExperience(e)}>{e}</button>
                 ))}
               </div>
 
-              <div className="sticky-cta"><button className="primary" onClick={next}>Build my plan <span>→</span></button></div>
+              <div className="first-screen-proof">
+                <span className="proof-check">✓</span>
+                <div><b>Not another dashboard.</b><small>A guided first step before you see a list of products.</small></div>
+              </div>
+
+              <div className="sticky-cta"><button className="primary" onClick={next}>Build my first plan <span>→</span></button></div>
             </section>
           )}
 
