@@ -35,3 +35,7 @@ The prototype is intentionally not another investing dashboard. The opening expe
 **“Why would a 22-year-old open this instead of the normal Groww app?”**
 
 The answer is a guided entry point: start with the person's goal and comfortable monthly amount, then reveal a simple plan and explain the trade-offs before showing products.
+
+## Responsive design
+- **Desktop:** two-column case-study workspace with a persistent product rationale rail and a wider app canvas.
+- **Mobile:** immersive single-column app surface with full-width cards, touch-friendly controls and a sticky bottom CTA.
