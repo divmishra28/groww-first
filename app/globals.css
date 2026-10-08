@@ -151,3 +151,80 @@
   .learning-modal-head h2{font-size:24px;}
   .learning-topic-content p{font-size:11px;line-height:1.58;}
 }
+
+/* Dark mode contrast pass — keep the existing light-mode design unchanged. */
+.dark-mode{color:var(--ink);background:var(--bg)}
+.dark-mode .app-frame{background:var(--surface);color:var(--ink);border-color:var(--line)}
+.dark-mode .brand-name,.dark-mode h1,.dark-mode .hero-kicker,.dark-mode .hero-kicker span,.dark-mode .section-label,
+.dark-mode .goal-copy strong,.dark-mode .amount-head span,.dark-mode .amount-head strong,.dark-mode .risk-card b,
+.dark-mode .thesis-flow b,.dark-mode .value-row b,.dark-mode .info-strip b,.dark-mode .education-card b,
+.dark-mode .coach-head strong,.dark-mode .investment-progress-labels b,.dark-mode .milestone-top b,
+.dark-mode .why-invest-card h3,.dark-mode .starting-point-card h3,.dark-mode .summary-hero h2,
+.dark-mode .summary-hero strong,.dark-mode .starting-point-card strong,.dark-mode .investment-card h3,
+.dark-mode .milestone-card strong,.dark-mode .next-habit b{color:var(--ink)}
+.dark-mode .goal-copy small,.dark-mode .range-labels,.dark-mode .thesis-flow small,.dark-mode .value-row span,
+.dark-mode .reason-card p,.dark-mode .coach-head small,.dark-mode .investment-reasons small,
+.dark-mode .why-invest-card p,.dark-mode .milestone-top span,.dark-mode .milestone-next,
+.dark-mode .next-habit small,.dark-mode .mini-allocation-row span,.dark-mode .muted{color:var(--muted)}
+.dark-mode .income-context{background:#1c2824;color:var(--muted)}
+.dark-mode .income-context b{color:var(--ink)}
+.dark-mode .desktop-value-card,.dark-mode .amount-card,.dark-mode .goal-card,.dark-mode .risk-card{color:var(--ink)}
+.dark-mode .allocation-name{color:var(--muted)}
+.dark-mode .allocation-row strong,.dark-mode .allocation-subrow strong{color:var(--ink)}
+.dark-mode .allocation-subrow{color:var(--muted)}
+.dark-mode .education-card span,.dark-mode .scenario span,.dark-mode .investment-reasons small,.dark-mode .milestone-next{color:var(--muted)}
+.dark-mode .question{color:#cbd4d0;background:#1d2321;border-color:#303633}
+.dark-mode .answer{color:#c5ceca;background:#1c2824}
+.dark-mode .summary-chips span{color:#c5ceca;background:#1b211f}
+.dark-mode .starting-amount small{color:var(--muted)}
+.dark-mode .first-investment-badge{background:#10251f;color:#83e3c7}
+.dark-mode .disclaimer,.dark-mode .prototype-note,.dark-mode .footer,.dark-mode .mobile-trust{color:#8e9995}
+.dark-mode .primary{background:#f3f6f5;color:#101412;box-shadow:0 8px 18px rgba(0,0,0,.28)}
+.dark-mode .primary span{color:#00b98a}
+.dark-mode .primary:disabled{background:#2b302e;color:#7f8985;box-shadow:none}
+.dark-mode .success-ring span{color:#05231c}
+.dark-mode .chart-labels{color:#8f9995}
+.dark-mode .chart-card,.dark-mode .scenario,.dark-mode .coach-card{color:var(--ink)}
+.dark-mode .scenario strong,.dark-mode .chart-head strong{color:var(--ink)}
+.dark-mode .theme-toggle{color:var(--ink)}
+.dark-mode .back-btn.visible{color:#c8d1ce}
+.dark-mode .learning-topic b,.dark-mode .learning-modal-head h2,.dark-mode .learning-topic-content h3{color:var(--ink)}
+.dark-mode .learning-topic-content p{color:var(--muted)}
+.dark-mode .learning-modal{background:var(--surface);color:var(--ink)}
+.dark-mode .thesis-card,.dark-mode .gamification-hub,.dark-mode .reason-card,.dark-mode .summary-hero,
+.dark-mode .starting-point-card,.dark-mode .guardrail-card,.dark-mode .investment-card,
+.dark-mode .why-invest-card,.dark-mode .milestone-card,.dark-mode .next-habit{color:var(--ink)}
+.dark-mode .next-learning{color:#dce8e4}
+.dark-mode .hub-title span{color:#9eaaa5}
+.dark-mode .journey-item small{color:#9eaaa5}
+.dark-mode .journey-item b{color:var(--ink)}
+.dark-mode .journey-item>strong{color:#68d5ba}
+.dark-mode .mini-title{color:#9aa6a1}
+.dark-mode .learning-card strong{color:#68d5ba}
+.dark-mode .learning-card b{color:var(--ink)}
+.dark-mode .learning-card small{color:var(--muted)}
+.dark-mode .first-screen-proof{background:#1b211f;color:var(--ink)}
+.dark-mode .first-screen-proof b{color:var(--ink)}
+.dark-mode .first-screen-proof small{color:var(--muted)}
+.dark-mode .spark{background:#17372e;color:#73e3c5}
+.dark-mode .info-strip{color:var(--muted)}
+.dark-mode .education-card>div{border-color:#303733;color:var(--muted)}
+.dark-mode .education-card>div b{color:var(--ink)}
+.dark-mode .education-card>div em{color:#68d5ba}
+.dark-mode .prototype-note{color:#8e9995}
+.dark-mode .chart-tooltip{color:#101412}
+.dark-mode .chart-tooltip b{color:#101412}
+.dark-mode .chart-tooltip span{color:#147b63}
+.dark-mode .chart-tooltip small{color:#66716d}
+.dark-mode .desktop-layout{color:var(--ink)}
+.dark-mode .desktop-rail{color:var(--ink)}
+.dark-mode .desktop-rail>p,.dark-mode .rail-note small,.dark-mode .rail-steps small{color:#8f9995}
+.dark-mode .rail-contrast b,.dark-mode .rail-note b{color:var(--ink)}
+.dark-mode .rail-contrast span,.dark-mode .rail-note span{color:#9aa6a1}
+.dark-mode .rail-highlight span{color:#68d5ba}
+.dark-mode .rail-steps b{color:var(--ink)}
+.dark-mode .rail-arrow{color:#6f978c!important}
+
+/* Ensure the page surround follows the active theme too. */
+body:has(.dark-mode){background:#0b0e0d;color:#f3f6f5}
+body:has(.dark-mode) .site-shell{background:#0b0e0d}
