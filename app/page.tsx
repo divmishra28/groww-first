@@ -162,6 +162,11 @@ const equitySubBuckets = [
   { label: 'Mutual Funds', share: 40 },
 ];
 
+// Illustrative annual assumptions used only by this prototype.
+// They are educational inputs, not forecasts or guaranteed returns.
+const returnAssumptions = { Equity: 0.10, Debt: 0.06, Gold: 0.07 } as const;
+const stressAssumptions = { Equity: 0.05, Debt: 0.03, Gold: 0.03 } as const;
+
 function formatINR(value: number) {
   return `₹${Math.max(0, value).toLocaleString('en-IN')}`;
 }
@@ -206,9 +211,25 @@ export default function Home() {
   const plan = goal ? basePlans[goal] : null;
   const split = goal ? adjustedSplit(goal, risk) : [45, 35, 20] as [number, number, number];
   const years = goal === 'Emergency fund' ? 3 : goal === 'Big purchase' ? 5 : 10;
+
+  const weightedAnnualReturn = (allocation: [number, number, number], assumptions: { Equity: number; Debt: number; Gold: number }) =>
+    allocation[0] / 100 * assumptions.Equity +
+    allocation[1] / 100 * assumptions.Debt +
+    allocation[2] / 100 * assumptions.Gold;
+
+  const futureValueForSIP = (monthlyAmount: number, annualRate: number, horizonYears: number) => {
+    const months = Math.round(horizonYears * 12);
+    if (months <= 0) return 0;
+    const monthlyRate = Math.pow(1 + annualRate, 1 / 12) - 1;
+    if (Math.abs(monthlyRate) < 1e-9) return monthlyAmount * months;
+    return monthlyAmount * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate);
+  };
+
+  const expectedAnnualReturn = weightedAnnualReturn(split, returnAssumptions);
+  const stressAnnualReturn = weightedAnnualReturn(split, stressAssumptions);
   const invested = monthly * 12 * years;
-  const illustrative = Math.round(invested * (years === 3 ? 1.08 : years === 5 ? 1.22 : 1.42));
-  const stress = Math.round(invested * (years === 3 ? 0.97 : years === 5 ? 0.92 : 0.88));
+  const illustrative = Math.round(futureValueForSIP(monthly, expectedAnnualReturn, years));
+  const stress = Math.round(futureValueForSIP(monthly, stressAnnualReturn, years));
 
   const answer = {
     'Why this plan?': plan?.note ?? 'We are starting with your goal and comfort with volatility rather than making you pick a product first.',
@@ -217,11 +238,26 @@ export default function Home() {
     'Compare alternatives': 'Compare options on time horizon, risk and purpose — not just on their highest past return.'
   }[question as keyof Record<string, string>];
 
-  const chartPoints = useMemo(() => {
-    if (years === 3) return '10 160, 90 142, 160 150, 230 124, 300 132, 380 108, 455 118, 520 91, 590 104';
-    if (years === 5) return '10 166, 90 150, 160 157, 230 132, 300 140, 380 112, 455 123, 520 86, 590 98';
-    return '10 170, 90 151, 160 163, 230 134, 300 147, 380 107, 455 121, 520 76, 590 89';
-  }, [years]);
+  const projectionSeries = useMemo(() => {
+    const horizonPoints = 9;
+    const turbulence = [0, 0.96, 1.03, 0.98, 1.07, 1.02, 1.09, 1.04, 1];
+    const values = Array.from({ length: horizonPoints }, (_, index) => {
+      const t = index === 0 ? 0 : years * (index / (horizonPoints - 1));
+      return Math.max(0, futureValueForSIP(monthly, expectedAnnualReturn, t) * turbulence[index]);
+    });
+    const maxValue = Math.max(illustrative, ...values, 1);
+    const minY = 76;
+    const maxY = 184;
+    const points = values.map((value, index) => {
+      const x = 10 + (580 * index) / (horizonPoints - 1);
+      const y = maxY - (value / maxValue) * (maxY - minY);
+      return { x, y, value };
+    });
+    if (points.length) points[points.length - 1] = { x: 590, y: maxY - (illustrative / maxValue) * (maxY - minY), value: illustrative };
+    return points;
+  }, [monthly, expectedAnnualReturn, years, illustrative]);
+
+  const chartPoints = projectionSeries.map((point) => `${point.x.toFixed(2)} ${point.y.toFixed(2)}`).join(',');
 
   const next = () => setStep((s) => Math.min(5, s + 1));
   const back = () => setStep((s) => Math.max(0, s - 1));
@@ -319,7 +355,7 @@ export default function Home() {
                             type="number"
                             inputMode="numeric"
                             min="500"
-                            max="1000000"
+                            max="100000"
                             step="1"
                             value={monthlyEditing ? monthlyInput : String(monthly)}
                             placeholder={monthlyEditing ? '' : undefined}
@@ -337,8 +373,8 @@ export default function Home() {
                             onBlur={() => {
                               const raw = monthlyInput.trim();
                               const parsed = raw === '' ? NaN : Number(raw);
-                              if (!Number.isFinite(parsed) || parsed < 500 || parsed > 1000000) {
-                                setMonthlyError('Enter an amount between ₹500 and ₹10,00,000.');
+                              if (!Number.isFinite(parsed) || parsed < 500 || parsed > 100000) {
+                                setMonthlyError('Enter an amount between ₹500 and ₹1,00,000.');
                                 return;
                               }
                               setMonthly(parsed);
@@ -361,8 +397,8 @@ export default function Home() {
                           />
                         </label>
                       </div>
-                      <input className="range" type="range" min="500" max="1000000" step="1000" value={monthly} onChange={(e) => setMonthly(Number(e.target.value))} aria-label="Monthly investment slider" />
-                      <div className="range-labels"><span>₹500</span><span>₹10,00,000</span></div>
+                      <input className="range" type="range" min="500" max="100000" step="1000" value={monthly} onChange={(e) => setMonthly(Number(e.target.value))} aria-label="Monthly investment slider" />
+                      <div className="range-labels"><span>₹500</span><span>₹1,00,000</span></div>
                       {monthlyError && <div className="monthly-error" role="alert">{monthlyError}</div>}
                       <div className="income-context"><b>Keep it sustainable.</b> Pick an amount you could keep investing every month without stressing your budget.</div>
                     </div>
@@ -473,13 +509,11 @@ export default function Home() {
                           <line x1="10" y1="205" x2="590" y2="205" stroke="#ddd" />
                           <line x1="10" y1="145" x2="590" y2="145" stroke="#eee" strokeDasharray="4 6" />
                           <line x1="10" y1="85" x2="590" y2="85" stroke="#eee" strokeDasharray="4 6" />
-                          {chartPoints.split(',').map((point, i) => {
-                            const [x, y] = point.trim().split(' ').map(Number);
-                            const pointValue = Math.round(invested * (0.9 + ((184 - y) / 150) * 0.55));
-                            return <circle key={`${x}-${y}`} cx={x} cy={y} r={chartTooltip?.type === 'performance' && chartTooltip.index === i ? 7 : 5} fill="#00a980" className="chart-point" onMouseEnter={() => setChartTooltip({ type: 'performance', index: i, x: x / 6, y: y / 2.2 })} onMouseLeave={() => setChartTooltip(null)} onFocus={() => setChartTooltip({ type: 'performance', index: i, x: x / 6, y: y / 2.2 })} onBlur={() => setChartTooltip(null)} tabIndex={0} />;
-                          })}
+                          {projectionSeries.map((point, i) => (
+                            <circle key={`${point.x}-${point.y}`} cx={point.x} cy={point.y} r={chartTooltip?.type === 'performance' && chartTooltip.index === i ? 7 : 5} fill="#00a980" className="chart-point" onMouseEnter={() => setChartTooltip({ type: 'performance', index: i, x: point.x / 6, y: point.y / 2.2 })} onMouseLeave={() => setChartTooltip(null)} onFocus={() => setChartTooltip({ type: 'performance', index: i, x: point.x / 6, y: point.y / 2.2 })} onBlur={() => setChartTooltip(null)} tabIndex={0} />
+                          ))}
                         </svg>
-                        {chartTooltip?.type === 'performance' && (() => { const point = chartPoints.split(',')[chartTooltip.index].trim().split(' ').map(Number); const value = Math.round(invested * (0.9 + ((184 - point[1]) / 150) * 0.55)); return <div className="chart-tooltip performance-tooltip" style={{ left: `${chartTooltip.x}%`, top: `${Math.max(4, chartTooltip.y - 13)}%` }}><b>{chartTooltip.index === 0 ? 'Start' : `Point ${chartTooltip.index}`}</b><span>{formatINR(value)}</span><small>Illustrative only · not a forecast</small></div>; })()}
+                        {chartTooltip?.type === 'performance' && (() => { const point = projectionSeries[chartTooltip.index]; return <div className="chart-tooltip performance-tooltip" style={{ left: `${chartTooltip.x}%`, top: `${Math.max(4, chartTooltip.y - 13)}%` }}><b>{chartTooltip.index === 0 ? 'Start' : chartTooltip.index === projectionSeries.length - 1 ? `${years} years` : `Year ${(years * chartTooltip.index / (projectionSeries.length - 1)).toFixed(1)}`}</b><span>{formatINR(Math.round(point.value))}</span><small>Illustrative only · not a forecast</small></div>; })()}
                       </div>
                       <div className="chart-labels"><span>Start</span><span>Market ups & downs</span><span>{years} years</span></div>
                     </div>
@@ -487,6 +521,11 @@ export default function Home() {
                       <div className="scenario"><span>Total contributions</span><strong>{formatINR(invested)}</strong></div>
                       <div className="scenario highlight"><span>Illustrative middle</span><strong>{formatINR(illustrative)}</strong></div>
                       <div className="scenario"><span>Stress example</span><strong>{formatINR(stress)}</strong></div>
+                    </div>
+                    <div className="projection-assumptions">
+                      <b>Illustrative annual assumptions</b>
+                      <span>Equity 10% · Debt 6% · Gold 7%</span>
+                      <small>Projection uses a weighted annual rate from your current mix, with monthly contributions. Stress case: Equity 5% · Debt 3% · Gold 3%. These are educational assumptions, not forecasts or guarantees.</small>
                     </div>
                   </div>
 
