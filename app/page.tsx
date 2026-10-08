@@ -189,6 +189,9 @@ export default function Home() {
   const [step, setStep] = useState(0);
   const [goal, setGoal] = useState<Goal | null>(null);
   const [monthly, setMonthly] = useState(3000);
+  const [monthlyInput, setMonthlyInput] = useState('');
+  const [monthlyEditing, setMonthlyEditing] = useState(false);
+  const [monthlyError, setMonthlyError] = useState('');
   const [risk, setRisk] = useState<RiskComfort>('Some ups & downs');
   const [question, setQuestion] = useState('Why this plan?');
   const [hasInvested, setHasInvested] = useState(false);
@@ -309,25 +312,58 @@ export default function Home() {
                     <div className="amount-card">
                       <div className="amount-head">
                         <span>Monthly investment</span>
-                        <label className="monthly-input-wrap" aria-label="Monthly investment amount">
+                        <label className={monthlyError ? 'monthly-input-wrap has-error' : 'monthly-input-wrap'} aria-label="Monthly investment amount">
                           <span aria-hidden="true">₹</span>
                           <input
                             className="monthly-input"
                             type="number"
+                            inputMode="numeric"
                             min="500"
                             max="1000000"
                             step="1"
-                            value={monthly}
-                            onChange={(e) => {
-                              const next = Number(e.target.value);
-                              if (Number.isNaN(next)) return;
-                              setMonthly(Math.min(1000000, Math.max(500, next)));
+                            value={monthlyEditing ? monthlyInput : String(monthly)}
+                            placeholder={monthlyEditing ? '' : undefined}
+                            onFocus={() => {
+                              if (!monthlyEditing) {
+                                setMonthlyEditing(true);
+                                setMonthlyInput('');
+                                setMonthlyError('');
+                              }
                             }}
+                            onChange={(e) => {
+                              setMonthlyInput(e.target.value);
+                              setMonthlyError('');
+                            }}
+                            onBlur={() => {
+                              const raw = monthlyInput.trim();
+                              const parsed = raw === '' ? NaN : Number(raw);
+                              if (!Number.isFinite(parsed) || parsed < 500 || parsed > 1000000) {
+                                setMonthlyError('Enter an amount between ₹500 and ₹10,00,000.');
+                                return;
+                              }
+                              setMonthly(parsed);
+                              setMonthlyEditing(false);
+                              setMonthlyInput('');
+                              setMonthlyError('');
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                (e.currentTarget as HTMLInputElement).blur();
+                              }
+                              if (e.key === 'Escape') {
+                                setMonthlyEditing(false);
+                                setMonthlyInput('');
+                                setMonthlyError('');
+                                (e.currentTarget as HTMLInputElement).blur();
+                              }
+                            }}
+                            aria-invalid={Boolean(monthlyError)}
                           />
                         </label>
                       </div>
                       <input className="range" type="range" min="500" max="1000000" step="1000" value={monthly} onChange={(e) => setMonthly(Number(e.target.value))} aria-label="Monthly investment slider" />
                       <div className="range-labels"><span>₹500</span><span>₹10,00,000</span></div>
+                      {monthlyError && <div className="monthly-error" role="alert">{monthlyError}</div>}
                       <div className="income-context"><b>Keep it sustainable.</b> Pick an amount you could keep investing every month without stressing your budget.</div>
                     </div>
 

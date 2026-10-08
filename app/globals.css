@@ -408,3 +408,23 @@ body:has(.dark-mode) .site-shell{background:#0b0e0d}
   .monthly-input-wrap>span{font-size:22px;}
   .monthly-input{width:118px;font-size:24px;}
 }
+
+/* Center the monthly amount badge exactly inside the donut in every theme and viewport. */
+.donut-interactive{position:relative;display:block;}
+.donut-interactive .donut-hole{
+  position:absolute;
+  left:50%;
+  top:50%;
+  right:auto;
+  bottom:auto;
+  inset:auto;
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+  margin:0;
+}
+.monthly-input-wrap.has-error{border-color:#d95d5d;}
+.monthly-input-wrap.has-error .monthly-input{color:#b33a3a;}
+.monthly-error{margin-top:8px;color:#b33a3a;font-size:10px;font-weight:750;}
+[data-theme="dark"] .monthly-input-wrap.has-error{border-color:#ef7b7b;}
+[data-theme="dark"] .monthly-input-wrap.has-error .monthly-input{color:#ffb2b2;}
+[data-theme="dark"] .monthly-error{color:#ff9f9f;}
