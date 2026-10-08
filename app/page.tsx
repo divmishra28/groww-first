@@ -307,8 +307,26 @@ export default function Home() {
 
                     <div className="section-label income-title">2. What feels comfortable to invest each month?</div>
                     <div className="amount-card">
-                      <div className="amount-head"><span>Monthly investment</span><strong>{formatINR(monthly)}</strong></div>
-                      <input className="range" type="range" min="500" max="1000000" step="1000" value={monthly} onChange={(e) => setMonthly(Number(e.target.value))} aria-label="Monthly investment" />
+                      <div className="amount-head">
+                        <span>Monthly investment</span>
+                        <label className="monthly-input-wrap" aria-label="Monthly investment amount">
+                          <span aria-hidden="true">₹</span>
+                          <input
+                            className="monthly-input"
+                            type="number"
+                            min="500"
+                            max="1000000"
+                            step="1"
+                            value={monthly}
+                            onChange={(e) => {
+                              const next = Number(e.target.value);
+                              if (Number.isNaN(next)) return;
+                              setMonthly(Math.min(1000000, Math.max(500, next)));
+                            }}
+                          />
+                        </label>
+                      </div>
+                      <input className="range" type="range" min="500" max="1000000" step="1000" value={monthly} onChange={(e) => setMonthly(Number(e.target.value))} aria-label="Monthly investment slider" />
                       <div className="range-labels"><span>₹500</span><span>₹10,00,000</span></div>
                       <div className="income-context"><b>Keep it sustainable.</b> Pick an amount you could keep investing every month without stressing your budget.</div>
                     </div>

@@ -385,3 +385,26 @@ body:has(.dark-mode) .site-shell{background:#0b0e0d}
     max-height:330px;
   }
 }
+
+/* Editable monthly investment field — slider remains unchanged. */
+.amount-head{align-items:center;}
+.monthly-input-wrap{display:flex;align-items:baseline;justify-content:flex-end;gap:2px;min-width:0;}
+.monthly-input-wrap>span{font-size:23px;font-weight:850;letter-spacing:-.8px;color:var(--ink);}
+.monthly-input{width:145px;border:0;outline:0;background:transparent;color:var(--ink);font:inherit;font-size:26px;font-weight:850;letter-spacing:-1.1px;text-align:right;padding:0;margin:0;min-width:0;}
+.monthly-input::-webkit-outer-spin-button,.monthly-input::-webkit-inner-spin-button{margin:0;}
+.monthly-input:focus{color:var(--green-dark);}
+
+/* Keep the investment amount perfectly centered inside the donut. */
+.donut-interactive .donut-hole{
+  left:50%;
+  top:50%;
+  right:auto;
+  bottom:auto;
+  inset:auto;
+  transform:translate(-50%,-50%);
+}
+
+@media(max-width:719px){
+  .monthly-input-wrap>span{font-size:22px;}
+  .monthly-input{width:118px;font-size:24px;}
+}
