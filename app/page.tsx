@@ -17,7 +17,25 @@ const learningModules = [
   { id: 'risk', title: 'Risk basics', detail: 'Why your portfolio can move up and down.', xp: 20 },
   { id: 'sip', title: 'SIP basics', detail: 'How regular investing builds a habit.', xp: 20 },
   { id: 'diversification', title: 'Diversification', detail: 'Why spreading exposure can reduce concentration risk.', xp: 20 }
-];
+] as const;
+
+const learningContent: Record<string, { id: string; title: string; body: string }[]> = {
+  risk: [
+    { id: 'what-is-risk', title: 'What is investment risk?', body: 'Risk is the possibility that your investment value changes in a way you did not expect. A higher chance of bigger gains usually comes with a higher chance of bigger short-term losses.' },
+    { id: 'volatility', title: 'Volatility is not the same as a permanent loss', body: 'Markets can move sharply up or down from day to day. A temporary fall in market value is different from a permanent loss caused by selling at the wrong time or holding an investment that no longer fits your goal.' },
+    { id: 'time-horizon', title: 'Why time horizon matters', body: 'The more time you have before you need the money, the more room you may have to sit through market fluctuations. Money you need soon generally deserves more attention to stability and liquidity.' }
+  ],
+  sip: [
+    { id: 'what-is-sip', title: 'What is a SIP?', body: 'A Systematic Investment Plan lets you invest a fixed amount at regular intervals, such as every month. The goal is to make investing a repeatable habit instead of relying on one large decision.' },
+    { id: 'how-it-works', title: 'How a SIP works', body: 'On each chosen date, your planned amount is invested according to the investment you selected. Because prices change, the number of units you buy can also change from one month to the next.' },
+    { id: 'staying-consistent', title: 'Why consistency matters', body: 'A sustainable amount you can keep investing is often easier to stick with than an amount that stretches your budget. A SIP is a habit tool, not a guarantee of returns.' }
+  ],
+  diversification: [
+    { id: 'why-diversify', title: 'Why diversify?', body: 'Diversification means spreading money across different investments so one investment does not determine the outcome of the entire portfolio. It can reduce concentration risk, but it cannot eliminate investment risk.' },
+    { id: 'across-assets', title: 'Diversifying across asset types', body: 'Equity, debt and gold can behave differently in different market conditions. Combining asset types can change how strongly the overall portfolio reacts to a particular event.' },
+    { id: 'within-equity', title: 'Diversifying within equity', body: 'Equity itself can be spread across companies, sectors and investment vehicles. In this prototype, the Equity bucket is split between stocks and mutual funds to make that distinction visible.' }
+  ]
+};
 
 const basePlans: Record<Goal, Plan> = {
   'Emergency fund': {
@@ -98,6 +116,8 @@ export default function Home() {
   const [earned, setEarned] = useState<string[]>([]);
   const [darkMode, setDarkMode] = useState(false);
   const [chartTooltip, setChartTooltip] = useState<{ type: 'allocation' | 'performance'; index: number; x: number; y: number } | null>(null);
+  const [activeLearningModule, setActiveLearningModule] = useState<string | null>(null);
+  const [activeLearningTopic, setActiveLearningTopic] = useState<string | null>(null);
 
   const plan = goal ? basePlans[goal] : null;
   const split = goal ? adjustedSplit(goal, risk) : [45, 35, 20] as [number, number, number];
@@ -133,25 +153,6 @@ export default function Home() {
 
   return (
     <main className={darkMode ? 'site-shell dark-mode' : 'site-shell'} data-theme={darkMode ? 'dark' : 'light'}>
-      <div className="desktop-layout">
-        <aside className="desktop-rail">
-          <div className="rail-brand"><img src="/groww.png" alt="Groww" /><span>Groww First</span></div>
-          <div className="rail-eyebrow">PRODUCT THESIS</div>
-          <h2>Don't start with a stock.<br /><span>Start with yourself.</span></h2>
-          <p>Groww First is a guided layer before the catalogue. It helps a new investor understand a sensible starting point before seeing products.</p>
-          <div className="rail-contrast">
-            <div><span>Groww</span><b>“What should I buy?”</b></div>
-            <div className="rail-arrow">↓</div>
-            <div className="rail-highlight"><span>Groww First</span><b>“What makes sense for me?”</b></div>
-          </div>
-          <div className="rail-steps">
-            <div><span>01</span><div><b>Goal</b><small>Start with the purpose</small></div></div>
-            <div><span>02</span><div><b>Plan</b><small>See a simple mix</small></div></div>
-            <div><span>03</span><div><b>Downside</b><small>Know the trade-off</small></div></div>
-          </div>
-          <div className="rail-note"><span>DESIGNED FOR</span><b>20–26 year-old first-time investors</b><small>First paycheck · part-time income · first investing account</small></div>
-        </aside>
-
         <div className="app-frame">
           <header className="topbar">
             <button className={step > 0 ? 'back-btn visible' : 'back-btn'} onClick={back} aria-label="Go back">← <span>Back</span></button>
@@ -189,7 +190,7 @@ export default function Home() {
             {gamificationTab === 'Learning' && (
               <div className="learning-list">
                 {learningModules.map((module) => (
-                  <button key={module.id} className={earned.includes(`learn-${module.id}`) ? 'learning-card complete' : 'learning-card'} onClick={() => awardXp(`learn-${module.id}`, module.xp)}>
+                  <button key={module.id} className={earned.includes(`learn-${module.id}`) ? 'learning-card complete' : 'learning-card'} onClick={() => { awardXp(`learn-${module.id}`, module.xp); setActiveLearningModule(module.id); setActiveLearningTopic(learningContent[module.id][0].id); }}>
                     <span className="learning-icon">{earned.includes(`learn-${module.id}`) ? '✓' : '✦'}</span>
                     <span><b>{module.title}</b><small>{module.detail}</small></span>
                     <strong>+{module.xp} XP</strong>
@@ -197,7 +198,7 @@ export default function Home() {
                 ))}
               </div>
             )}
-            {nextLearning ? <div className="next-mission"><span>NEXT UP</span><b>{nextLearning.title}</b><small>{nextLearning.xp} XP waiting</small></div> : <div className="next-mission complete"><span>LEARNING COMPLETE</span><b>You’ve completed the current learning set.</b><small>Keep investing consistently and building the habit.</small></div>}
+            {nextLearning ? <div className="next-learning"><span>NEXT TO LEARN</span><b>{nextLearning.title}</b><small>{nextLearning.xp} XP waiting</small></div> : <div className="next-learning complete"><span>LEARNING COMPLETE</span><b>You’ve completed the current learning set.</b><small>Keep investing consistently and building the habit.</small></div>}
           </section>
 
           <div key={step} className="step-transition">
@@ -476,8 +477,40 @@ export default function Home() {
             )}
           </div>
           <footer className="footer">Groww First · Prototype</footer>
+
+          {activeLearningModule && (
+            <div className="learning-modal-backdrop" role="presentation" onMouseDown={() => { setActiveLearningModule(null); setActiveLearningTopic(null); }}>
+              <div className="learning-modal card" role="dialog" aria-modal="true" aria-labelledby="learning-modal-title" onMouseDown={(event) => event.stopPropagation()}>
+                <div className="learning-modal-head">
+                  <div>
+                    <div className="mini-title">LEARN</div>
+                    <h2 id="learning-modal-title">{learningModules.find((module) => module.id === activeLearningModule)?.title}</h2>
+                  </div>
+                  <button className="modal-close" type="button" onClick={() => { setActiveLearningModule(null); setActiveLearningTopic(null); }} aria-label="Close learning module">×</button>
+                </div>
+
+                <div className="learning-topic-list">
+                  {learningContent[activeLearningModule].map((topic) => (
+                    <button key={topic.id} type="button" className={activeLearningTopic === topic.id ? 'learning-topic active' : 'learning-topic'} onClick={() => setActiveLearningTopic(topic.id)}>
+                      <span>{activeLearningTopic === topic.id ? '✓' : '→'}</span>
+                      <b>{topic.title}</b>
+                    </button>
+                  ))}
+                </div>
+
+                {activeLearningTopic && (
+                  <div className="learning-topic-content">
+                    <div className="learning-topic-label">WHAT TO KNOW</div>
+                    <h3>{learningContent[activeLearningModule].find((topic) => topic.id === activeLearningTopic)?.title}</h3>
+                    <p>{learningContent[activeLearningModule].find((topic) => topic.id === activeLearningTopic)?.body}</p>
+                  </div>
+                )}
+
+                <div className="learning-modal-foot">+{learningModules.find((module) => module.id === activeLearningModule)?.xp} XP added to your learning progress</div>
+              </div>
+            </div>
+          )}
         </div>
-      </div>
     </main>
   );
 }
