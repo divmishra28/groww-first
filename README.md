@@ -1,4 +1,4 @@
-# Groww First — GenZ case-study prototype
+# Groww First — GenZ case-study prototype by Divyansh Mishra
 
 A mobile-first prototype for the Groww GenZ case study.
 
@@ -16,17 +16,6 @@ The prototype is intentionally closer to a polished Groww-style experience: brig
 - No live financial APIs
 - No real brokerage/order functionality
 
-## Run locally
-```bash
-npm install
-npm run dev
-```
-
-Open http://localhost:3000
-
-## Deploy
-Push this folder to GitHub, then import the repository into Vercel. No environment variables are required.
-
 ## Important
 This is a case-study prototype with illustrative numbers. It is not financial advice and does not place real orders.
 
@@ -37,8 +26,7 @@ The prototype is intentionally not another investing dashboard. The opening expe
 The answer is a guided entry point: start with the person's goal and comfortable monthly amount, then reveal a simple plan and explain the trade-offs before showing products.
 
 ## Responsive design
-- **Desktop:** two-column case-study workspace with a persistent product rationale rail and a wider app canvas.
-- **Mobile:** immersive single-column app surface with full-width cards, touch-friendly controls and a sticky bottom CTA.
+- Immersive single-column app surface with full-width cards, touch-friendly controls and a sticky bottom CTA.
 
 ## Live-app audit changes
 - Removed the misleading default selected goal; the user must choose a goal before continuing.
