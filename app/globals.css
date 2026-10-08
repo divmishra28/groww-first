@@ -228,3 +228,160 @@
 /* Ensure the page surround follows the active theme too. */
 body:has(.dark-mode){background:#0b0e0d;color:#f3f6f5}
 body:has(.dark-mode) .site-shell{background:#0b0e0d}
+
+
+/* Final polish: readable dark-mode navigation buttons */
+.dark-mode .primary,
+[data-theme="dark"] .primary{
+  color:#101412 !important;
+}
+.dark-mode .primary span,
+[data-theme="dark"] .primary span{
+  color:#00b98a !important;
+}
+.dark-mode .primary:disabled,
+[data-theme="dark"] .primary:disabled{
+  color:#dce5e1 !important;
+}
+
+/* Final polish: stable Monthly mix layout in both themes */
+.plan-visual{overflow:visible;}
+.donut-wrap{
+  grid-template-columns:210px minmax(260px,1fr);
+  gap:28px;
+  align-items:center;
+  padding:26px 2px 24px;
+}
+.donut-interactive{width:210px;height:210px;}
+.donut-svg{width:210px;height:210px;}
+.donut-hole{
+  width:118px;
+  height:118px;
+}
+.donut-hole strong{
+  font-size:23px;
+  letter-spacing:-.8px;
+}
+.allocation-list{
+  width:100%;
+  display:grid;
+  gap:12px;
+}
+.allocation-row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 124px;
+  align-items:center;
+  gap:18px;
+  min-height:34px;
+}
+.allocation-name{
+  min-width:0;
+  font-size:13px;
+  color:var(--muted);
+}
+.allocation-row strong{
+  width:124px;
+  text-align:right;
+  font-size:14px;
+  color:var(--ink);
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap;
+}
+.allocation-sublist{
+  margin:1px 0 2px 22px;
+  padding-left:12px;
+  border-left:1px solid var(--line);
+  display:grid;
+  gap:2px;
+}
+.allocation-subrow{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 124px;
+  align-items:center;
+  gap:18px;
+  font-size:9px;
+  color:var(--muted);
+  min-height:20px;
+}
+.allocation-subrow span{
+  min-width:0;
+}
+.allocation-subrow strong{
+  width:124px;
+  text-align:right;
+  font-size:9px;
+  color:var(--muted);
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap;
+}
+[data-theme="dark"] .allocation-name,
+[data-theme="dark"] .allocation-subrow{
+  color:var(--muted);
+}
+[data-theme="dark"] .allocation-row strong{
+  color:var(--ink);
+}
+[data-theme="dark"] .allocation-subrow strong{
+  color:#a8b0ad;
+}
+
+/* Learning modal: room for six substantial topics per module */
+.learning-topic-list{
+  max-height:300px;
+  overflow:auto;
+  padding-right:3px;
+}
+.learning-topic-content{
+  max-height:360px;
+  overflow:auto;
+}
+.learning-topic-content p{
+  font-size:12px;
+  line-height:1.72;
+}
+@media(max-width:719px){
+  .donut-wrap{
+    grid-template-columns:minmax(150px,170px) minmax(0,1fr);
+    gap:14px;
+    padding:20px 0 18px;
+  }
+  .donut-interactive,
+  .donut-svg{
+    width:170px;
+    height:170px;
+  }
+  .donut-hole{
+    width:96px;
+    height:96px;
+  }
+  .donut-hole strong{
+    font-size:18px;
+  }
+  .allocation-row{
+    grid-template-columns:minmax(0,1fr) 92px;
+    gap:8px;
+    min-height:28px;
+  }
+  .allocation-row strong{
+    width:92px;
+    font-size:12px;
+  }
+  .allocation-sublist{
+    margin-left:14px;
+    padding-left:9px;
+  }
+  .allocation-subrow{
+    grid-template-columns:minmax(0,1fr) 92px;
+    gap:8px;
+  }
+  .allocation-subrow strong{
+    width:92px;
+    font-size:8px;
+  }
+  .learning-topic-list{
+    max-height:270px;
+  }
+  .learning-topic-content{
+    max-height:330px;
+  }
+}
